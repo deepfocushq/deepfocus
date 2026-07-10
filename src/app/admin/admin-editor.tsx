@@ -65,6 +65,72 @@ function TextAreaField({
   );
 }
 
+function ImageUploadField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    setUploading(true);
+    setError(null);
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
+    setUploading(false);
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      setError(body.error || "Upload failed");
+      return;
+    }
+    const body = await res.json();
+    onChange(body.url);
+  }
+
+  return (
+    <div>
+      <span className="mb-1.5 block text-sm font-medium">{label}</span>
+      <div className="flex items-start gap-3">
+        {value ? (
+          <img
+            src={value}
+            alt=""
+            className="h-14 w-14 shrink-0 rounded-lg border border-border object-cover"
+          />
+        ) : (
+          <div className="h-14 w-14 shrink-0 rounded-lg border border-dashed border-border" />
+        )}
+        <div className="flex-1 space-y-2">
+          <input
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder="https://... or upload a file"
+            className="w-full rounded-lg border border-border bg-surface-2 px-3 py-2 text-sm outline-none focus:border-accent"
+          />
+          <div className="flex items-center gap-2">
+            <label className="inline-block cursor-pointer rounded-full border border-dashed border-border px-3 py-1 text-xs text-muted hover:border-foreground/30 hover:text-foreground">
+              {uploading ? "Uploading…" : "Upload image"}
+              <input type="file" accept="image/*" className="hidden" onChange={handleFile} />
+            </label>
+            {error && <span className="text-xs text-red-400">{error}</span>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SectionCard({
   title,
   description,
@@ -298,11 +364,10 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
                     onChange={(v) => update({ description: v })}
                     rows={2}
                   />
-                  <Field
-                    label="Thumbnail image URL (optional)"
+                  <ImageUploadField
+                    label="Thumbnail (optional)"
                     value={item.thumbnail}
                     onChange={(v) => update({ thumbnail: v })}
-                    placeholder="https://..."
                   />
                 </>
               )}
@@ -329,12 +394,7 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
               addLabel="Add image"
               newItem={() => ({ id: newId("f"), url: "" })}
               renderItem={(item, update) => (
-                <Field
-                  label="Image URL"
-                  value={item.url}
-                  onChange={(v) => update({ url: v })}
-                  placeholder="https://..."
-                />
+                <ImageUploadField label="Image" value={item.url} onChange={(v) => update({ url: v })} />
               )}
             />
           </div>

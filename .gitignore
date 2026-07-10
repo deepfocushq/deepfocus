@@ -41,8 +41,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# local content store (production uses Vercel KV instead)
+# local content store (production uses Neon Postgres instead)
 /data/content.json
 
 # personal local settings
 /.claude/settings.local.json
+.env*.local
