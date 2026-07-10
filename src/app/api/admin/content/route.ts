@@ -1,8 +1,20 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { SESSION_COOKIE_NAME, verifySessionToken } from "@/lib/auth";
-import { saveContent } from "@/lib/content";
+import { getContent, saveContent } from "@/lib/content";
 import type { SiteContent } from "@/lib/types";
+
+export async function GET() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+
+  if (!verifySessionToken(token)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const content = await getContent();
+  return NextResponse.json(content);
+}
 
 export async function PUT(request: Request) {
   const cookieStore = await cookies();
