@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { SESSION_COOKIE_NAME, verifySessionToken } from "@/lib/auth";
 import { getContent, saveContent } from "@/lib/content";
-import type { SiteContent } from "@/lib/types";
+import { isValidSiteContent } from "@/lib/validate-content";
 
 export async function GET() {
   const cookieStore = await cookies();
@@ -24,8 +24,8 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = (await request.json().catch(() => null)) as SiteContent | null;
-  if (!body) {
+  const body = await request.json().catch(() => null);
+  if (!isValidSiteContent(body)) {
     return NextResponse.json({ error: "Invalid content payload" }, { status: 400 });
   }
 

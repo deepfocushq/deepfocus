@@ -4,11 +4,12 @@ export const SESSION_COOKIE_NAME = "df_admin_session";
 export const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 7; // 7 days
 
 function getSecret(): string {
-  return (
-    process.env.SESSION_SECRET ||
-    process.env.ADMIN_PASSWORD ||
-    "insecure-dev-secret-change-me"
-  );
+  const secret = process.env.SESSION_SECRET || process.env.ADMIN_PASSWORD;
+  if (secret) return secret;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("SESSION_SECRET or ADMIN_PASSWORD must be set in production.");
+  }
+  return "insecure-dev-secret-change-me";
 }
 
 function sign(payload: string): string {

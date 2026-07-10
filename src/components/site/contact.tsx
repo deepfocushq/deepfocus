@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { SocialLink } from "@/lib/types";
+import { sanitizeUrl } from "@/lib/safe-url";
 
 export default function Contact({
   eyebrow,
@@ -22,7 +23,7 @@ export default function Contact({
     e.preventDefault();
     const subject = encodeURIComponent(`New message from ${name || "your site"}`);
     const body = encodeURIComponent(`${message}\n\n— ${name} (${fromEmail})`);
-    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${encodeURIComponent(email)}?subject=${subject}&body=${body}`;
   }
 
   return (
@@ -50,7 +51,7 @@ export default function Contact({
               {socialLinks.map((link) => (
                 <a
                   key={link.id}
-                  href={link.url}
+                  href={sanitizeUrl(link.url)}
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center justify-between rounded-2xl border border-border bg-surface p-4 font-medium"
