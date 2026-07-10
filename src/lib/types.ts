@@ -1,9 +1,15 @@
 export interface Project {
   id: string;
-  category: string;
   title: string;
   description: string;
   thumbnail: string;
+  videoUrl: string;
+}
+
+export interface ProjectGroup {
+  id: string;
+  name: string;
+  projects: Project[];
 }
 
 export interface FrameImage {
@@ -60,7 +66,7 @@ export interface SiteContent {
     heading: string;
     subheading: string;
   };
-  projects: Project[];
+  projectGroups: ProjectGroup[];
   frameWall: {
     eyebrow: string;
     heading: string;

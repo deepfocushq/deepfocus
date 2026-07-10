@@ -18,27 +18,65 @@ export const defaultContent: SiteContent = {
     heading: "Recent projects worth a second look.",
     subheading: "Open a tile to see the details, or jump into the full case study.",
   },
-  projects: [
+  projectGroups: [
     {
-      id: "p1",
-      category: "Case study",
-      title: "Your first project",
-      description: "A short description of the problem, your approach, and the outcome.",
-      thumbnail: "",
+      id: "g1",
+      name: "Fashion & Beauty",
+      projects: [
+        {
+          id: "p1",
+          title: "Your first project",
+          description: "A short description of the problem, your approach, and the outcome.",
+          thumbnail: "",
+          videoUrl: "",
+        },
+        {
+          id: "p2",
+          title: "Your second project",
+          description: "Swap this out with a real project title and a one-line summary.",
+          thumbnail: "",
+          videoUrl: "",
+        },
+      ],
     },
     {
-      id: "p2",
-      category: "Case study",
-      title: "Your second project",
-      description: "Swap this out with a real project title and a one-line summary.",
-      thumbnail: "",
+      id: "g2",
+      name: "Tech / SaaS / Apps",
+      projects: [
+        {
+          id: "p3",
+          title: "Your third project",
+          description: "Keep descriptions short — the detail lives in the full case page.",
+          thumbnail: "",
+          videoUrl: "",
+        },
+      ],
     },
     {
-      id: "p3",
-      category: "Case study",
-      title: "Your third project",
-      description: "Keep descriptions short — the detail lives in the full case page.",
-      thumbnail: "",
+      id: "g3",
+      name: "Documentary / Storytelling",
+      projects: [
+        {
+          id: "p4",
+          title: "Your fourth project",
+          description: "A short description of the problem, your approach, and the outcome.",
+          thumbnail: "",
+          videoUrl: "",
+        },
+      ],
+    },
+    {
+      id: "g4",
+      name: "E-commerce / Retail / Commercial",
+      projects: [
+        {
+          id: "p5",
+          title: "Your fifth project",
+          description: "A short description of the problem, your approach, and the outcome.",
+          thumbnail: "",
+          videoUrl: "",
+        },
+      ],
     },
   ],
   frameWall: {

@@ -7,6 +7,7 @@ import type {
   HighlightItem,
   ProcessStep,
   Project,
+  ProjectGroup,
   ServiceItem,
   SiteContent,
   SocialLink,
@@ -65,14 +66,39 @@ function TextAreaField({
   );
 }
 
-function ImageUploadField({
+async function uploadToR2(file: File): Promise<string> {
+  const res = await fetch("/api/admin/upload-url", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ contentType: file.type }),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error || "Could not start upload");
+  }
+  const { uploadUrl, publicUrl } = await res.json();
+
+  const putRes = await fetch(uploadUrl, {
+    method: "PUT",
+    headers: { "Content-Type": file.type },
+    body: file,
+  });
+  if (!putRes.ok) {
+    throw new Error("Upload to storage failed");
+  }
+  return publicUrl;
+}
+
+function MediaUploadField({
   label,
   value,
   onChange,
+  kind,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  kind: "image" | "video";
 }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -84,30 +110,32 @@ function ImageUploadField({
 
     setUploading(true);
     setError(null);
-    const formData = new FormData();
-    formData.append("file", file);
-    const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
-    setUploading(false);
-
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      setError(body.error || "Upload failed");
-      return;
+    try {
+      const url = await uploadToR2(file);
+      onChange(url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
     }
-    const body = await res.json();
-    onChange(body.url);
   }
 
   return (
     <div>
       <span className="mb-1.5 block text-sm font-medium">{label}</span>
       <div className="flex items-start gap-3">
-        {value ? (
-          <img
-            src={value}
-            alt=""
-            className="h-14 w-14 shrink-0 rounded-lg border border-border object-cover"
-          />
+        {kind === "image" ? (
+          value ? (
+            <img
+              src={value}
+              alt=""
+              className="h-14 w-14 shrink-0 rounded-lg border border-border object-cover"
+            />
+          ) : (
+            <div className="h-14 w-14 shrink-0 rounded-lg border border-dashed border-border" />
+          )
+        ) : value ? (
+          <video src={value} className="h-14 w-14 shrink-0 rounded-lg border border-border object-cover" />
         ) : (
           <div className="h-14 w-14 shrink-0 rounded-lg border border-dashed border-border" />
         )}
@@ -120,8 +148,13 @@ function ImageUploadField({
           />
           <div className="flex items-center gap-2">
             <label className="inline-block cursor-pointer rounded-full border border-dashed border-border px-3 py-1 text-xs text-muted hover:border-foreground/30 hover:text-foreground">
-              {uploading ? "Uploading…" : "Upload image"}
-              <input type="file" accept="image/*" className="hidden" onChange={handleFile} />
+              {uploading ? "Uploading…" : kind === "image" ? "Upload image" : "Upload video"}
+              <input
+                type="file"
+                accept={kind === "image" ? "image/*" : "video/*"}
+                className="hidden"
+                onChange={handleFile}
+              />
             </label>
             {error && <span className="text-xs text-red-400">{error}</span>}
           </div>
@@ -348,27 +381,58 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
             onChange={(v) => patchSection("selectedWork", { subheading: v })}
           />
           <div className="pt-2">
-            <span className="mb-2 block text-sm font-semibold">Projects</span>
-            <ArrayEditor<Project>
-              items={content.projects}
-              onChange={(items) => set("projects", items)}
-              addLabel="Add project"
-              newItem={() => ({ id: newId("p"), category: "", title: "", description: "", thumbnail: "" })}
-              renderItem={(item, update) => (
+            <span className="mb-2 block text-sm font-semibold">Project groups</span>
+            <ArrayEditor<ProjectGroup>
+              items={content.projectGroups}
+              onChange={(items) => set("projectGroups", items)}
+              addLabel="Add group"
+              newItem={() => ({ id: newId("g"), name: "", projects: [] })}
+              renderItem={(group, updateGroup) => (
                 <>
-                  <Field label="Category" value={item.category} onChange={(v) => update({ category: v })} />
-                  <Field label="Title" value={item.title} onChange={(v) => update({ title: v })} />
-                  <TextAreaField
-                    label="Description"
-                    value={item.description}
-                    onChange={(v) => update({ description: v })}
-                    rows={2}
+                  <Field
+                    label="Group name"
+                    value={group.name}
+                    onChange={(v) => updateGroup({ name: v })}
+                    placeholder="e.g. Fashion & Beauty"
                   />
-                  <ImageUploadField
-                    label="Thumbnail (optional)"
-                    value={item.thumbnail}
-                    onChange={(v) => update({ thumbnail: v })}
-                  />
+                  <div className="pt-1">
+                    <span className="mb-2 block text-sm font-medium">Videos in this group</span>
+                    <ArrayEditor<Project>
+                      items={group.projects}
+                      onChange={(projects) => updateGroup({ projects })}
+                      addLabel="Add video"
+                      newItem={() => ({
+                        id: newId("p"),
+                        title: "",
+                        description: "",
+                        thumbnail: "",
+                        videoUrl: "",
+                      })}
+                      renderItem={(item, update) => (
+                        <>
+                          <Field label="Title" value={item.title} onChange={(v) => update({ title: v })} />
+                          <TextAreaField
+                            label="Description"
+                            value={item.description}
+                            onChange={(v) => update({ description: v })}
+                            rows={2}
+                          />
+                          <MediaUploadField
+                            label="Video"
+                            kind="video"
+                            value={item.videoUrl}
+                            onChange={(v) => update({ videoUrl: v })}
+                          />
+                          <MediaUploadField
+                            label="Thumbnail / poster (optional)"
+                            kind="image"
+                            value={item.thumbnail}
+                            onChange={(v) => update({ thumbnail: v })}
+                          />
+                        </>
+                      )}
+                    />
+                  </div>
                 </>
               )}
             />
@@ -394,7 +458,12 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
               addLabel="Add image"
               newItem={() => ({ id: newId("f"), url: "" })}
               renderItem={(item, update) => (
-                <ImageUploadField label="Image" value={item.url} onChange={(v) => update({ url: v })} />
+                <MediaUploadField
+                  label="Image"
+                  kind="image"
+                  value={item.url}
+                  onChange={(v) => update({ url: v })}
+                />
               )}
             />
           </div>

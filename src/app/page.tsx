@@ -38,7 +38,7 @@ export default async function Home() {
           eyebrow={content.selectedWork.eyebrow}
           heading={content.selectedWork.heading}
           subheading={content.selectedWork.subheading}
-          projects={content.projects}
+          groups={content.projectGroups}
         />
         <FrameWall
           eyebrow={content.frameWall.eyebrow}
