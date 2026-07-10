@@ -12,6 +12,8 @@ export const defaultContent: SiteContent = {
     titleLine1: "Work that's built",
     titleLine2: "to get noticed",
     highlightWord: "noticed",
+    imageLeft: "",
+    imageRight: "",
   },
   selectedWork: {
     eyebrow: "Selected work",

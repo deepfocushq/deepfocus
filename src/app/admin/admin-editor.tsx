@@ -362,6 +362,18 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
             value={content.hero.highlightWord}
             onChange={(v) => patchSection("hero", { highlightWord: v })}
           />
+          <MediaUploadField
+            label="Left decorative image (optional)"
+            kind="image"
+            value={content.hero.imageLeft}
+            onChange={(v) => patchSection("hero", { imageLeft: v })}
+          />
+          <MediaUploadField
+            label="Right decorative image (optional)"
+            kind="image"
+            value={content.hero.imageRight}
+            onChange={(v) => patchSection("hero", { imageRight: v })}
+          />
         </SectionCard>
 
         <SectionCard title="Selected work">
