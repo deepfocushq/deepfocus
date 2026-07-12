@@ -18,12 +18,40 @@ export default function Contact({
   const [name, setName] = useState("");
   const [fromEmail, setFromEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const subject = encodeURIComponent(`New message from ${name || "your site"}`);
-    const body = encodeURIComponent(`${message}\n\n— ${name} (${fromEmail})`);
-    window.location.href = `mailto:${encodeURIComponent(email)}?subject=${subject}&body=${body}`;
+    setStatus("sending");
+    setError(null);
+
+    const res = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email: fromEmail, message }),
+    });
+
+    if (res.ok) {
+      setStatus("sent");
+      setName("");
+      setFromEmail("");
+      setMessage("");
+      return;
+    }
+
+    if (res.status === 500) {
+      // Not configured server-side — fall back to opening the visitor's email client.
+      const subject = encodeURIComponent(`New message from ${name || "your site"}`);
+      const body = encodeURIComponent(`${message}\n\n— ${name} (${fromEmail})`);
+      window.location.href = `mailto:${encodeURIComponent(email)}?subject=${subject}&body=${body}`;
+      setStatus("idle");
+      return;
+    }
+
+    const data = await res.json().catch(() => ({}));
+    setError(data.error || "Could not send your message.");
+    setStatus("error");
   }
 
   return (
@@ -74,6 +102,7 @@ export default function Contact({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Your name"
+              required
               className="w-full rounded-lg border border-border bg-surface-2 px-4 py-2.5 text-sm outline-none focus:border-accent"
             />
           </div>
@@ -84,6 +113,7 @@ export default function Contact({
               onChange={(e) => setFromEmail(e.target.value)}
               placeholder="you@company.com"
               type="email"
+              required
               className="w-full rounded-lg border border-border bg-surface-2 px-4 py-2.5 text-sm outline-none focus:border-accent"
             />
           </div>
@@ -94,14 +124,18 @@ export default function Contact({
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Tell me about your project..."
               rows={4}
+              required
               className="w-full resize-none rounded-lg border border-border bg-surface-2 px-4 py-2.5 text-sm outline-none focus:border-accent"
             />
           </div>
+          {status === "error" && error && <p className="text-sm text-red-400">{error}</p>}
+          {status === "sent" && <p className="text-sm text-accent">Message sent — thanks!</p>}
           <button
             type="submit"
-            className="w-full rounded-full bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
+            disabled={status === "sending"}
+            className="w-full rounded-full bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
           >
-            Send message &#8599;
+            {status === "sending" ? "Sending..." : "Send message ↗"}
           </button>
         </form>
       </div>

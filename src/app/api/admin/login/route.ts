@@ -6,11 +6,7 @@ import {
   SESSION_COOKIE_NAME,
   SESSION_MAX_AGE_SECONDS,
 } from "@/lib/auth";
-import { clearAttempts, isRateLimited, recordFailedAttempt } from "@/lib/rate-limit";
-
-function getClientIp(request: Request): string {
-  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-}
+import { clearAttempts, getClientIp, isRateLimited, recordAttempt } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   if (!process.env.ADMIN_PASSWORD) {
@@ -20,8 +16,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const ip = getClientIp(request);
-  if (await isRateLimited(ip)) {
+  const key = `login:${getClientIp(request)}`;
+  if (await isRateLimited(key)) {
     return NextResponse.json(
       { error: "Too many attempts. Try again in 15 minutes." },
       { status: 429 }
@@ -32,11 +28,11 @@ export async function POST(request: Request) {
   const password = typeof body?.password === "string" ? body.password : "";
 
   if (!checkPassword(password)) {
-    await recordFailedAttempt(ip);
+    await recordAttempt(key);
     return NextResponse.json({ error: "Incorrect password" }, { status: 401 });
   }
 
-  await clearAttempts(ip);
+  await clearAttempts(key);
 
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE_NAME, createSessionToken(), {
