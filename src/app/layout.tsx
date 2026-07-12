@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { getContent } from "@/lib/content";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -8,10 +9,14 @@ const jakarta = Plus_Jakarta_Sans({
   weight: ["400", "500", "600", "700", "800"],
 });
 
-export const metadata: Metadata = {
-  title: "Portfolio",
-  description: "Personal portfolio site.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const content = await getContent();
+  return {
+    title: "Portfolio",
+    description: "Personal portfolio site.",
+    icons: { icon: content.brand.faviconUrl || "/favicon.ico" },
+  };
+}
 
 const THEME_SCRIPT = `
 (function () {

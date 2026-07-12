@@ -27,7 +27,11 @@ export default async function Home() {
 
   return (
     <>
-      <Navbar brandName={content.brand.name} hireMeLabel={content.nav.hireMeLabel} />
+      <Navbar
+        brandName={content.brand.name}
+        hireMeLabel={content.nav.hireMeLabel}
+        logoUrl={content.brand.logoUrl}
+      />
       <main>
         <Hero
           titleLine1={content.hero.titleLine1}
@@ -35,6 +39,7 @@ export default async function Home() {
           highlightWord={content.hero.highlightWord}
           imageLeft={content.hero.imageLeft}
           imageRight={content.hero.imageRight}
+          backgroundImage={content.hero.backgroundImage}
         />
         <SelectedWork
           eyebrow={content.selectedWork.eyebrow}

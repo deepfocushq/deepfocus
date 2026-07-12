@@ -10,9 +10,11 @@ const LINKS = [
 export default function Navbar({
   brandName,
   hireMeLabel,
+  logoUrl,
 }: {
   brandName: string;
   hireMeLabel: string;
+  logoUrl: string;
 }) {
   const initial = brandName.trim().charAt(0).toUpperCase() || "P";
 
@@ -23,7 +25,13 @@ export default function Navbar({
           href="#top"
           className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-base font-bold"
         >
-          {initial}
+          {logoUrl ? (
+            <span className="absolute inset-0 overflow-hidden rounded-full">
+              <img src={logoUrl} alt={brandName} className="h-full w-full object-cover" />
+            </span>
+          ) : (
+            initial
+          )}
           <span className="absolute right-0.5 top-0.5 h-2 w-2 rounded-full bg-accent-blue" />
         </Link>
 

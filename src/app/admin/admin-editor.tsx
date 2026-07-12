@@ -344,6 +344,18 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
             value={content.nav.hireMeLabel}
             onChange={(v) => patchSection("nav", { hireMeLabel: v })}
           />
+          <MediaUploadField
+            label="Logo (optional — falls back to the first letter of your name)"
+            kind="image"
+            value={content.brand.logoUrl}
+            onChange={(v) => patchSection("brand", { logoUrl: v })}
+          />
+          <MediaUploadField
+            label="Favicon (optional — PNG recommended, square)"
+            kind="image"
+            value={content.brand.faviconUrl}
+            onChange={(v) => patchSection("brand", { faviconUrl: v })}
+          />
         </SectionCard>
 
         <SectionCard title="Hero" description="The big headline at the top of the page.">
@@ -373,6 +385,12 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
             kind="image"
             value={content.hero.imageRight}
             onChange={(v) => patchSection("hero", { imageRight: v })}
+          />
+          <MediaUploadField
+            label="Background image (optional — sits behind the whole hero, dimmed for readability)"
+            kind="image"
+            value={content.hero.backgroundImage}
+            onChange={(v) => patchSection("hero", { backgroundImage: v })}
           />
         </SectionCard>
 

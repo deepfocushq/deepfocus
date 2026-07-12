@@ -52,6 +52,8 @@ export interface SiteContent {
   brand: {
     name: string;
     tagline: string;
+    logoUrl: string;
+    faviconUrl: string;
   };
   nav: {
     hireMeLabel: string;
@@ -62,6 +64,7 @@ export interface SiteContent {
     highlightWord: string;
     imageLeft: string;
     imageRight: string;
+    backgroundImage: string;
   };
   selectedWork: {
     eyebrow: string;

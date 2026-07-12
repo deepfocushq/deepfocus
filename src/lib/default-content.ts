@@ -4,6 +4,8 @@ export const defaultContent: SiteContent = {
   brand: {
     name: "Your Name",
     tagline: "Designer & Developer",
+    logoUrl: "",
+    faviconUrl: "",
   },
   nav: {
     hireMeLabel: "Hire me",
@@ -14,6 +16,7 @@ export const defaultContent: SiteContent = {
     highlightWord: "noticed",
     imageLeft: "",
     imageRight: "",
+    backgroundImage: "",
   },
   selectedWork: {
     eyebrow: "Selected work",
