@@ -21,18 +21,19 @@ export default function Navbar({
   return (
     <header className="fixed inset-x-0 top-4 z-50 px-4 sm:top-6">
       <div className="mx-auto flex max-w-6xl items-center justify-between">
-        <Link
-          href="#top"
-          className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-base font-bold"
-        >
+        <Link href="#top" className="flex h-11 shrink-0 items-center">
           {logoUrl ? (
-            <span className="absolute inset-0 overflow-hidden rounded-full">
-              <img src={logoUrl} alt={brandName} className="h-full w-full object-cover" />
-            </span>
+            <img
+              src={logoUrl}
+              alt={brandName}
+              className="h-11 w-auto max-w-[160px] object-contain"
+            />
           ) : (
-            initial
+            <span className="relative flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-base font-bold">
+              {initial}
+              <span className="absolute right-0.5 top-0.5 h-2 w-2 rounded-full bg-accent-blue" />
+            </span>
           )}
-          <span className="absolute right-0.5 top-0.5 h-2 w-2 rounded-full bg-accent-blue" />
         </Link>
 
         <nav className="flex items-center gap-1 rounded-full border border-border bg-surface/90 px-2 py-2 backdrop-blur">

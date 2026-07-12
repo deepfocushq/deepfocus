@@ -21,6 +21,7 @@ const REQUIRED_OBJECT_KEYS: (keyof SiteContent)[] = [
 
 const REQUIRED_ARRAY_KEYS: (keyof SiteContent)[] = [
   "projectGroups",
+  "heroImages",
   "frameImages",
   "tools",
   "serviceItems",

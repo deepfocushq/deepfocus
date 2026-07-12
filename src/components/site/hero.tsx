@@ -1,16 +1,25 @@
+import type { FrameImage } from "@/lib/types";
+
+const SLOTS = [
+  { position: "left-6 top-28", rotate: "-rotate-6" },
+  { position: "right-6 top-28", rotate: "rotate-6" },
+  { position: "left-16 top-1/2 -translate-y-1/2", rotate: "-rotate-3" },
+  { position: "right-16 top-1/2 -translate-y-1/2", rotate: "rotate-3" },
+  { position: "left-10 bottom-16", rotate: "rotate-6" },
+  { position: "right-10 bottom-16", rotate: "-rotate-6" },
+];
+
 export default function Hero({
   titleLine1,
   titleLine2,
   highlightWord,
-  imageLeft,
-  imageRight,
+  images,
   backgroundImage,
 }: {
   titleLine1: string;
   titleLine2: string;
   highlightWord: string;
-  imageLeft: string;
-  imageRight: string;
+  images: FrameImage[];
   backgroundImage: string;
 }) {
   return (
@@ -24,20 +33,25 @@ export default function Hero({
         </div>
       )}
 
-      <div className="pointer-events-none absolute left-8 top-1/2 hidden -translate-y-1/2 -rotate-6 overflow-hidden rounded-2xl border border-border bg-surface p-3 shadow-2xl xl:block xl:left-16">
-        {imageLeft ? (
-          <img src={imageLeft} alt="" className="h-28 w-24 rounded-lg object-cover" />
-        ) : (
-          <div className="h-28 w-24 rounded-lg bg-gradient-to-br from-accent/30 to-accent-blue/30" />
-        )}
-      </div>
-      <div className="pointer-events-none absolute right-8 top-1/2 hidden -translate-y-1/2 rotate-6 overflow-hidden rounded-2xl border border-border bg-surface p-3 shadow-2xl xl:block xl:right-16">
-        {imageRight ? (
-          <img src={imageRight} alt="" className="h-28 w-24 rounded-lg object-cover" />
-        ) : (
-          <div className="h-28 w-24 rounded-lg bg-gradient-to-br from-accent-blue/30 to-accent/30" />
-        )}
-      </div>
+      {images.slice(0, 6).map((image, i) => {
+        const slot = SLOTS[i];
+        return (
+          <div
+            key={image.id}
+            className={`pointer-events-none absolute hidden overflow-hidden rounded-2xl border border-border bg-surface p-3 shadow-2xl xl:block ${slot.position} ${slot.rotate}`}
+          >
+            {image.url ? (
+              <img src={image.url} alt="" className="h-28 w-24 rounded-lg object-cover" />
+            ) : (
+              <div
+                className={`h-28 w-24 rounded-lg bg-gradient-to-br ${
+                  i % 2 === 0 ? "from-accent/30 to-accent-blue/30" : "from-accent-blue/30 to-accent/30"
+                }`}
+              />
+            )}
+          </div>
+        );
+      })}
 
       <div className="relative mx-auto max-w-4xl text-center">
         <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-6xl">

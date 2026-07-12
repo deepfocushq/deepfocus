@@ -62,10 +62,9 @@ export interface SiteContent {
     titleLine1: string;
     titleLine2: string;
     highlightWord: string;
-    imageLeft: string;
-    imageRight: string;
     backgroundImage: string;
   };
+  heroImages: FrameImage[];
   selectedWork: {
     eyebrow: string;
     heading: string;

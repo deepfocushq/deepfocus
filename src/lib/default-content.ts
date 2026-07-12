@@ -14,10 +14,12 @@ export const defaultContent: SiteContent = {
     titleLine1: "Work that's built",
     titleLine2: "to get noticed",
     highlightWord: "noticed",
-    imageLeft: "",
-    imageRight: "",
     backgroundImage: "",
   },
+  heroImages: [
+    { id: "hi1", url: "" },
+    { id: "hi2", url: "" },
+  ],
   selectedWork: {
     eyebrow: "Selected work",
     heading: "Recent projects worth a second look.",

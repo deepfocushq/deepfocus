@@ -37,8 +37,7 @@ export default async function Home() {
           titleLine1={content.hero.titleLine1}
           titleLine2={content.hero.titleLine2}
           highlightWord={content.hero.highlightWord}
-          imageLeft={content.hero.imageLeft}
-          imageRight={content.hero.imageRight}
+          images={content.heroImages}
           backgroundImage={content.hero.backgroundImage}
         />
         <SelectedWork

@@ -375,23 +375,30 @@ export default function AdminEditor({ initialContent }: { initialContent: SiteCo
             onChange={(v) => patchSection("hero", { highlightWord: v })}
           />
           <MediaUploadField
-            label="Left decorative image (optional)"
-            kind="image"
-            value={content.hero.imageLeft}
-            onChange={(v) => patchSection("hero", { imageLeft: v })}
-          />
-          <MediaUploadField
-            label="Right decorative image (optional)"
-            kind="image"
-            value={content.hero.imageRight}
-            onChange={(v) => patchSection("hero", { imageRight: v })}
-          />
-          <MediaUploadField
             label="Background image (optional — sits behind the whole hero, dimmed for readability)"
             kind="image"
             value={content.hero.backgroundImage}
             onChange={(v) => patchSection("hero", { backgroundImage: v })}
           />
+          <div className="pt-2">
+            <span className="mb-2 block text-sm font-semibold">
+              Decorative images (scattered around the hero — up to 6 shown)
+            </span>
+            <ArrayEditor<FrameImage>
+              items={content.heroImages}
+              onChange={(items) => set("heroImages", items)}
+              addLabel="Add image"
+              newItem={() => ({ id: newId("hi"), url: "" })}
+              renderItem={(item, update) => (
+                <MediaUploadField
+                  label="Image"
+                  kind="image"
+                  value={item.url}
+                  onChange={(v) => update({ url: v })}
+                />
+              )}
+            />
+          </div>
         </SectionCard>
 
         <SectionCard title="Selected work">
