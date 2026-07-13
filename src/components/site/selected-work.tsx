@@ -82,26 +82,28 @@ export default function SelectedWork({
                       </button>
                       {isOpen && (
                         <div className="border-t border-border px-5 pb-5 pt-4">
-                          <div className="aspect-video w-full overflow-hidden rounded-xl bg-surface-2">
-                            {project.videoUrl ? (
+                          {project.videoUrl ? (
+                            <div className="flex w-full justify-center">
                               <video
                                 src={project.videoUrl}
                                 poster={project.thumbnail || undefined}
                                 controls
-                                className="h-full w-full object-cover"
+                                className="max-h-[70vh] w-auto max-w-full rounded-xl bg-surface-2"
                               />
-                            ) : project.thumbnail ? (
+                            </div>
+                          ) : project.thumbnail ? (
+                            <div className="flex w-full justify-center">
                               <img
                                 src={project.thumbnail}
                                 alt={project.title}
-                                className="h-full w-full object-cover"
+                                className="max-h-[70vh] w-auto max-w-full rounded-xl bg-surface-2 object-contain"
                               />
-                            ) : (
-                              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-accent/10 to-accent-blue/10 text-sm text-muted">
-                                Add a video or thumbnail in the admin panel
-                              </div>
-                            )}
-                          </div>
+                            </div>
+                          ) : (
+                            <div className="flex aspect-video w-full items-center justify-center rounded-xl bg-gradient-to-br from-accent/10 to-accent-blue/10 text-sm text-muted">
+                              Add a video or thumbnail in the admin panel
+                            </div>
+                          )}
                           <p className="mt-4 text-sm text-muted">{project.description}</p>
                         </div>
                       )}
