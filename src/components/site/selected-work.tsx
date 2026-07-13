@@ -104,7 +104,6 @@ export default function SelectedWork({
                               Add a video or thumbnail in the admin panel
                             </div>
                           )}
-                          <p className="mt-4 text-sm text-muted">{project.description}</p>
                         </div>
                       )}
                     </div>
